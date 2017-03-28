@@ -39,6 +39,8 @@ val_check = [10 for x in num_steps_array]
 print(num_steps_array)
 error = []
 
+#Hei denne er forkskjelijg
+
 for num_steps in num_steps_array:
     error.append(np.abs(get_global_error(num_steps)))
 
