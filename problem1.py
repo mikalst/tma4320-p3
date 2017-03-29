@@ -34,20 +34,25 @@ def get_global_error(number_of_steps):
 
     return position_vectors[number_of_steps - 1, 1] - L
 
+"""
 num_steps_array = np.linspace(100, 3000, 50, dtype=int)
 val_check = [10 for x in num_steps_array]
-print(num_steps_array)
-error = []
 
-#Hei denne er forkskjelijg
+error = []
 
 for num_steps in num_steps_array:
     error.append(np.abs(get_global_error(num_steps)))
 
+print("done")
+
 plt.plot(num_steps_array, val_check)
 plt.plot(num_steps_array, error)
 plt.show()
+"""
 
+error = 1E4
+
+while
 
 
 
