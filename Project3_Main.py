@@ -1,9 +1,9 @@
 
-import Tutorial_PlottingFunctions as Tut_Pf
-import Tutorial_ParticleTracking as Tut_Pt
-import Tutorial_ExampleFileFromWiki as Tut_Effw
-import Tutorial_Integrators as Tut_Int
-import Tutorial_UtilityFunctions as Tut_Uf
+import Project3_PlottingFunctions as Tut_Pf
+import Project3_ParticleTracking as Tut_Pt
+import Project3_ExampleFileFromWiki as Tut_Effw
+import Project3_Integrators as Tut_Int
+import Project3_UtilityFunctions as Tut_Uf
 
 import xarray as xr
 import numpy as np

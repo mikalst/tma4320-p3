@@ -1,5 +1,5 @@
 import xarray as xr
-from Tutorial_ExampleFileFromWiki import Interpolator
+from Project3_ExampleFileFromWiki import Interpolator
 import numpy as np
 
 
