@@ -18,9 +18,9 @@ def v_w(x_vec, t, dt):
 
 def get_global_error(h): # h = dt
     t_values = [t for t in range(0, 24 * 3600, h)]
-    X = [100, 0]
+    X = np.array([100, 0])
     for t in t_values:
-        X += v_w(X, t, h)
+        X += np.array(v_w(X, t, h))
     return np.sqrt((X[0] - 100)**2 + X[1]**2)
 
 """
