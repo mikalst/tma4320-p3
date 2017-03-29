@@ -12,13 +12,13 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 
-def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.3e6]).reshape(2, 1)):
+def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.2e6]).reshape(2, 1)):
     """
     Task 2
 
     Here we plot the simulated trajectory of a particle with equation dx/dt = v_w(X, t)
     """
-    plt.style.use('bmh')
+    # plt.style.use('bmh')
 
     dataSet = xr.open_dataset('NorKyst-800m.nc')
 
@@ -27,7 +27,7 @@ def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.3e6])
     h = np.timedelta64(3600, 's')
 
     # Final time is set to initial time plus a time period of 1 'D' = 1 day. 3600 's' = 3600 seconds, 24 'h' = 24 hours
-    time_final = time_initial + np.timedelta64(1, 'D')
+    time_final = time_initial + np.timedelta64(10, 'D')
 
     # The continuous velocity field is calculated through spine interpolation, see Project3_Interpolator.
     velocityField = P_Interpolator.Interpolator(dataSet)
@@ -36,7 +36,14 @@ def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.3e6])
     # X0 = np.array([-3e6, -1.3e6]).reshape(2, 1)
 
     # Position vector is calculated from initial position
-    X1 = P_Uf.particleTrajectory(X0, time_initial, h, time_final, velocityField, P_Int.euler)
+    X1 = P_Uf.particleTrajectory(X0, time_initial, h, time_final, velocityField, P_Int.rk2)
+
+    return X1
+
+
+def plotSimulatedParticlePaths(array_of_several_X1, legend=[""]):
+
+    dataSet = xr.open_dataset('NorKyst-800m.nc')
 
     fig = plt.figure(figsize=(12, 8))
     ax = plt.axes(projection=ccrs.NorthPolarStereo())
@@ -59,14 +66,16 @@ def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.3e6])
     # Next, create latlong projection object
     p2 = pyproj.Proj(proj='latlong')
     # Convert coordinates
-    lons, lats = pyproj.transform(p1, p2, X1[:, 0], X1[:, 1])
 
     # Step 5:
     # Draw trajectories on the map. The transform argument
     # tells Cartopy how to convert from long-lat to projection
     # coordinates. If you leave out zorder, the lines may be
     # hidden behind the map features.
-    ax.plot(lons, lats, transform=ccrs.PlateCarree(), zorder=2)
+
+    for X1 in array_of_several_X1:
+        lons, lats = pyproj.transform(p1, p2, X1[:, 0], X1[:, 1])
+        ax.plot(lons, lats, transform=ccrs.PlateCarree(), zorder=2)
 
     # Step 6 (optional):
     # Set the extent of the map. If we leave out these, it would
@@ -75,6 +84,8 @@ def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.3e6])
     # map area is large enough to cover the four points
     # (lon0, lat0), (lon0, lat1), (lon1, lat0), (lon1, lat1).
     ax.set_extent((-5, 15, 57, 67))
+
+    plt.legend(legend)
 
     plt.show()
 
