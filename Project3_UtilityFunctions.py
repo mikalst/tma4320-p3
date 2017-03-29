@@ -3,7 +3,8 @@ import numpy as np
 
 def particleTrajectory(X_initial, time_initial, h, time_final, velocityField, integrator):
     numberOfTimeSteps = int((time_final - time_initial) / h)
-    X = np.zeros((numberOfTimeSteps + 1 + 1, *X_initial.shape))
+    print(numberOfTimeSteps)
+    X = np.zeros((numberOfTimeSteps + 1, *X_initial.shape))
     #  Vi vil ha X0 som start til en drøss med partikler
     #  Vi får ut shapen til X0
     #  Stjerne er kommando for å hente ut tupler
@@ -13,7 +14,7 @@ def particleTrajectory(X_initial, time_initial, h, time_final, velocityField, in
     X[0, :] = X_initial
     time_now = time_initial
 
-    for step in range(numberOfTimeSteps + 1):
+    for step in range(numberOfTimeSteps):
         h = min(h, time_final - time_now)
         time_now += h
 
