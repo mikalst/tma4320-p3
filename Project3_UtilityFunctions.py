@@ -1,23 +1,24 @@
 import numpy as np
 
 
-def particleTrajectory(X_initial, time_initial, h, time_final, velocityField, integrator):
+def particleTrajectory(X_initial, time_initial, h, time_final, velocityField, integrator, boolReturnOnlyEnd=False):
     numberOfTimeSteps = int((time_final - time_initial) / h)
-    print(numberOfTimeSteps)
-    X = np.zeros((numberOfTimeSteps + 1, *X_initial.shape))
-    #  Vi vil ha X0 som start til en drøss med partikler
-    #  Vi får ut shapen til X0
-    #  Stjerne er kommando for å hente ut tupler
-    #  Altså vil funksjonen vår være generell for vilkårling antall partikler
+    X = np.zeros((numberOfTimeSteps + 1 + 1, *X_initial.shape))
+    #  Må her skrive en forklaring på stjerneoperator
+    #  Denne henter ut tupler, men hvorfor gjøre vi dette?
     #  Oversett til engelsk
 
     X[0, :] = X_initial
     time_now = time_initial
 
-    for step in range(numberOfTimeSteps):
+    for step in range(numberOfTimeSteps + 1):
         h = min(h, time_final - time_now)
-        time_now += h
 
         X[step + 1, :] = integrator(X[step, :], h, time_now, velocityField)
+        time_now += h
+
+    # If only endpoint is needed, as in concentration plotting
+    if boolReturnOnlyEnd:
+        return X[numberOfTimeSteps, :]
 
     return X

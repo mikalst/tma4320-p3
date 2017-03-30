@@ -123,10 +123,7 @@ def main():
     # In order to plot trajectories, we need to convert coordinates
     # from xy to longitude and latitude
     # For this we will use the pyproj library
-    # First, create projection with metadata from dataset
-    p1 = pyproj.Proj(d.projection_stere.proj4)
-    # Next, create latlong projection object
-    p2 = pyproj.Proj(proj='latlong')
+
     # Convert coordinates
     lons, lats = pyproj.transform(p1, p2, x, y)
 

@@ -12,11 +12,28 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 
+def main():
+    # Set initial position
+    X0 = np.array([-3.1e6, -1.2e6]).reshape(2, 1)
+
+    # Prepare array of position vectors
+    array_of_several_X1 = []
+
+    # Find position vectors for all start times
+    for start_time in [24*day for day in range(10)]:
+        array_of_several_X1.append(simulateParticlesMoving(start_time, X0))
+
+    legend = ['01/02/17', '02/02/17', '03/02/17',
+              '04/02/17', '05/02/17', '06/02/17',
+              '07/02/17', '08/02/17', '09/02/17',
+              '10/02/17']
+
+    plotSimulatedParticlePaths(array_of_several_X1, legend)
+
+
 def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.2e6]).reshape(2, 1)):
     """
-    Task 2
-
-    Here we plot the simulated trajectory of a particle with equation dx/dt = v_w(X, t)
+    Function used in Task 2, used for only 1 particle with start and end specified in position
     """
     # plt.style.use('bmh')
 
@@ -27,7 +44,7 @@ def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.2e6])
     h = np.timedelta64(3600, 's')
 
     # Final time is set to initial time plus a time period of 1 'D' = 1 day. 3600 's' = 3600 seconds, 24 'h' = 24 hours
-    time_final = time_initial + np.timedelta64(10, 'D')
+    time_final = time_initial + np.timedelta64(1, 'D')
 
     # The continuous velocity field is calculated through spine interpolation, see Project3_Interpolator.
     velocityField = P_Interpolator.Interpolator(dataSet)
