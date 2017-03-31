@@ -13,7 +13,7 @@ import cartopy.feature as cfeature
 def main():
 
     # Number of 'particles' used to simulate concentration.
-    N_particles = 10000
+    N_particles = 20000
 
     # Particles are placed in random positions within given interval
     X0 = np.zeros((2, N_particles))
