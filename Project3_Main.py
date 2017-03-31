@@ -3,6 +3,7 @@
 
 import Project3_ParticleTracking as P_Pt
 import Project3_ConcentrationTracking as P_Ct
+import Project3_TestCase as P_Tc
 
 
 if __name__ == "__main__":
@@ -20,7 +21,7 @@ if __name__ == "__main__":
         pass
 
     elif MasterFlag == "Task1":
-        pass
+        P_Tc.main()
 
     elif MasterFlag == "Task2":
         P_Pt.main()
