@@ -14,4 +14,3 @@ def rk2(X_now, h, time_now, velocityField):
     k2 = velocityField(X_now + dt*k1, time_now)
     X_next = X_now + dt*0.5*(k1 + k2)
     return X_next
-
