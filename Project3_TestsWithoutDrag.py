@@ -1,19 +1,3 @@
-
-"""
-- > Calculate and plot the analytical and numerical solution of rotating velocity field using both Euler and RK2
-
-- > Plot error as a function of h on a log-log scale.
-
-- > Find the longest h one can use while still getting an error of less than 10 meters
-
-- > Repeat all parts of task 1a using the Explicit Trapezoid
- 
-- > Show time comparison of Euler and Explicit Trapezoid with the timestep h_euler and h_rk2 that will gives error less
-than 10 meters in the respective methods.
-
-- > Now let the x be controlled by Eq 1, which means it now has drag
-"""
-
 import time
 
 import matplotlib.pyplot as plt
@@ -75,8 +59,6 @@ def numericalParticleTrajectorySmallDrag(X_now, V_now, timeStart, timeEnd, numSt
 
         V[n + 1, :] = V[n, :] + a * timeStep
 
-        print('X:', X[n, :], ' V:', V[n, :], ' A:', a)
-
         if integrator == 'euler':
             X[n + 1, :] = X[n, :] + V[n, :] * timeStep
 
@@ -84,53 +66,6 @@ def numericalParticleTrajectorySmallDrag(X_now, V_now, timeStart, timeEnd, numSt
             X[n + 1, :] = X[n, :] + 0.5*(V[n, :] + V[n + 1, :]) * timeStep
 
     return X
-
-"""
-def rk2(X_now, h, time_now, velocityField):
-    dt = h
-    k1 = velocityField(X_now, time_now)
-    k2 = velocityField(X_now + dt*k1, time_now)
-    dx_dt = 0.5*(k1 + k2)
-    X_next = X_now + dt*dx_dt
-    return X_next
-
-
-def euler_c(X, v, t, h):  # v = velocity, a = acceleration
-    X += h * v
-    a = (ALPHA / MASS) * (v_w(X) - v)
-    v += h * a
-    return X, v
-
-
-def trapezoid_c(X, v, t, h):
-    X1, v1 = euler_c(X, v, t, h)
-    v = (v1 + v) / 2
-    X += h * v
-    return X, v
-
-
-def simpleParticleTrajectory(X0, start, step, end, integrator):
-
-    numberOfTimeSteps = int(round(((end - start) / step), 0))
-    X = np.zeros((numberOfTimeSteps + 1 + 1, 2))
-    V = np.zeros((numberOfTimeSteps + 1 + 1, 2))
-
-    X[0] = X0
-    time_now = start
-
-    for i in range(numberOfTimeSteps + 1):
-        h = min(step, end - time_now)
-        X[i + 1], V[i +1] = integrator(X[i], h, time_now, v_w)
-        time_now += h
-
-    return X
-
-
-def numericalParticleTrajectory(X0, time_start, time_step, time_end, integrator):
-
-    X = integrator(X0, time_start, time_step, time_end)
-    
-"""
 
 
 def analyticalParticleTrajectoryLargeDrag():
@@ -182,30 +117,30 @@ def plotNumericalvsAnalytical(numSteps_euler, numSteps_trapezoid):
                 r'Euler, '+r'$h = {} $'.format(numSteps_euler),
                 r'Explicit Trapezoid, '+r'$h = {} $'.format(numSteps_trapezoid)])
 
-    # plt.xlim([-2*L, 2*L])
-    # plt.ylim([-2*L, 2*L])
-
     plt.grid(True)
     plt.show()
 
-"""
-def globalError(num_of_steps, integrator):
-    time_step = TIME / num_of_steps
-    X1 = simpleParticleTrajectory([100, 0], 0, time_step, TIME, integrator)[-1]
 
-    return np.sqrt((100 - X1[0])**2 + X1[1]**2)
+def globalError(numSteps, integrator):
+
+    X0 = np.array([L, 0])
+    V0 = v_w(X0, 0)
+
+    X1_numerical = numericalParticleTrajectorySmallDrag(X0, V0, 0, TIME, numSteps, v_w, integrator)[-1, :]
+    X1_analytical = analyticalParticleTrajectorySmallDrag()[-1, :]
+
+    return np.sqrt((X1_numerical[0] - X1_analytical[0])**2 + (X1_analytical[1] - X1_numerical[1])**2)
 
 
-def plotError(lower_h, upper_h):
-    h_values = np.linspace(lower_h, upper_h)
-    error_values_euler = []
-    error_values_rk2 = []
-    for h in h_values:
-        error_values_euler.append(globalError(h, euler))
-        error_values_rk2.append(globalError(h, rk2))
+def plotError(lower_N, upper_N):
 
-    plt.loglog(h_values, error_values_euler)
-    plt.loglog(h_values, error_values_rk2)
+    n_values = range(lower_N, upper_N)
+
+    errorValuesEuler = [globalError(n, 'euler') for n in n_values]
+    errorValuesTrapezoid = [globalError(n, 'trapezoid') for n in n_values]
+
+    plt.loglog(n_values, errorValuesEuler)
+    plt.loglog(n_values, errorValuesTrapezoid)
     plt.xlabel(r'Steps ' + r'$N$')
     plt.ylabel(r'Error')
     plt.legend(['Euler', 'Explicit Trapezoid'])
@@ -236,22 +171,21 @@ def timeDifference(stepsRequired_euler, stepsRequired_rk2):
     X0 = np.array([L, 0])
 
     t_euler = time.time()
-    simpleParticleTrajectory(X0, 0, timeStep_euler, TIME, euler)
+    numericalParticleTrajectoryLargeDrag(X0, )
     t_euler = time.time() - t_euler
 
     t_rk2 = time.time()
-    simpleParticleTrajectory(X0, 0, timeStep_rk2, TIME, rk2)
+    # simpleParticleTrajectory(X0, 0, timeStep_rk2, TIME, rk2)
     t_rk2 = time.time() - t_rk2
 
     return t_rk2 / t_euler
-"""
 
 
 def main():
 
-    plotNumericalvsAnalytical(980, 980)
+    # plotNumericalvsAnalytical(800, 800)
+    plotError(800, 1000)
     """
-    plotError(10, 300)
 
     stepsRequired_euler = halfPointSolver(10, 300, euler, 10)
     stepsRequired_rk2 = halfPointSolver(10, 300, rk2, 10)
