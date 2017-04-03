@@ -40,7 +40,7 @@ def simulateParticlesMoving(hoursAfterDefaultDate=0, X0=np.array([-3e6, -1.2e6])
     dataSet = xr.open_dataset('NorKyst-800m.nc')
 
     # The initial time is set to now
-    time_initial = dataSet.time[hoursAfterDefaultDate]
+    time_initial = np.datetime64('2017-02-01T12:00:00')
     h = np.timedelta64(3600, 's')
 
     # Final time is set to initial time plus a time period of 1 'D' = 1 day. 3600 's' = 3600 seconds, 24 'h' = 24 hours
