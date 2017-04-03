@@ -34,7 +34,7 @@ def simulateParticlesMoving():
     for start_time in hoursAfterDefaultDate:
         print(start_time)
         time_initial = np.datetime64('2017-02-01T12:00:00') + np.timedelta64(start_time, 'h')
-        time_final = time_initial + np.timedelta64(1, 'D')
+        time_final = time_initial + np.timedelta64(10, 'D')
 
         # Position vector is calculated from initial position and time
         X1 = P_Uf.particleTrajectory(X0, time_initial, h, time_final, velocityField, P_Int.rk2)
