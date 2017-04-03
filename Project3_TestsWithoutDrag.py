@@ -100,14 +100,29 @@ def analyticalParticleTrajectorySmallDrag():
     return X.real
 
 
-def plotNumericalvsAnalytical(numSteps_euler, numSteps_trapezoid):
+def plotNumericalvsAnalytical(drag='Large'):
 
     X0 = np.array([L, 0])
     V0 = v_w(X0, 0)
 
-    X1_analytical = analyticalParticleTrajectorySmallDrag()
-    X1_numerical_euler = numericalParticleTrajectorySmallDrag(X0, V0, 0, TIME, numSteps_euler, v_w, 'euler')
-    X1_numerical_trapezoid = numericalParticleTrajectorySmallDrag(X0, V0, 0, TIME, numSteps_trapezoid, v_w, 'trapezoid')
+    if drag == 'Large':
+        numSteps_euler = 208
+        numSteps_trapezoid = 21
+
+        X1_analytical = analyticalParticleTrajectoryLargeDrag()
+        X1_numerical_euler = numericalParticleTrajectoryLargeDrag(X0, V0, 0, TIME, numSteps_euler, v_w, 'euler')
+        X1_numerical_trapezoid = numericalParticleTrajectoryLargeDrag(X0, V0, 0, TIME, numSteps_trapezoid, v_w, 'trapezoid')
+
+    elif drag == 'Small':
+        numSteps_euler = 1000
+        numSteps_trapezoid = 1000
+
+        X1_analytical = analyticalParticleTrajectorySmallDrag()
+        X1_numerical_euler = numericalParticleTrajectorySmallDrag(X0, V0, 0, TIME, numSteps_euler, v_w, 'euler')
+        X1_numerical_trapezoid = numericalParticleTrajectorySmallDrag(X0, V0, 0, TIME, numSteps_trapezoid, v_w, 'trapezoid')
+
+    else:
+        print("Invalid drag specifier")
 
     plt.plot(X1_analytical[:, 0], X1_analytical[:, 1])
     plt.plot(X1_numerical_euler[:, 0], X1_numerical_euler[:, 1])
@@ -121,7 +136,40 @@ def plotNumericalvsAnalytical(numSteps_euler, numSteps_trapezoid):
     plt.show()
 
 
-def globalError(numSteps, integrator):
+def plotSeveralNumericalvsAnalytical():
+    numSteps_euler = [40, 80, 140, 220, 300]
+
+    X0 = np.array([L, 0])
+    V0 = v_w(X0, 0)
+
+    X1_analytical = analyticalParticleTrajectoryLargeDrag()
+
+    plt.plot(X1_analytical[:, 0], X1_analytical[:, 1])
+
+    for n in numSteps_euler:
+        X1_numerical = numericalParticleTrajectoryLargeDrag(X0, V0, 0, TIME, n, v_w, 'euler')
+        plt.plot(X1_numerical[:, 0], X1_numerical[:, 1])
+
+    legend = ['Analytical'] + ['Euler, ' + r'$n = {}$'.format(n) for n in numSteps_euler]
+
+    plt.legend(legend)
+
+    plt.grid(True)
+    plt.show()
+
+
+def globalErrorLargeDrag(numSteps, integrator):
+
+    X0 = np.array([L, 0])
+    V0 = v_w(X0, 0)
+
+    X1_numerical = numericalParticleTrajectoryLargeDrag(X0, V0, 0, TIME, numSteps, v_w, integrator)[-1, :]
+    X1_analytical = analyticalParticleTrajectoryLargeDrag()[-1, :]
+
+    return np.sqrt((X1_numerical[0] - X1_analytical[0])**2 + (X1_analytical[1] - X1_numerical[1])**2)
+
+
+def globalErrorSmallDrag(numSteps, integrator):
 
     X0 = np.array([L, 0])
     V0 = v_w(X0, 0)
@@ -132,12 +180,20 @@ def globalError(numSteps, integrator):
     return np.sqrt((X1_numerical[0] - X1_analytical[0])**2 + (X1_analytical[1] - X1_numerical[1])**2)
 
 
-def plotError(lower_N, upper_N):
+def plotError(lower_N, upper_N, drag='Large'):
 
-    n_values = range(lower_N, upper_N)
+    n_values = range(lower_N, upper_N, 1)
 
-    errorValuesEuler = [globalError(n, 'euler') for n in n_values]
-    errorValuesTrapezoid = [globalError(n, 'trapezoid') for n in n_values]
+    if drag == 'Large':
+        errorValuesEuler = [globalErrorLargeDrag(n, 'euler') for n in n_values]
+        errorValuesTrapezoid = [globalErrorLargeDrag(n, 'trapezoid') for n in n_values]
+
+    elif drag == 'Small':
+        errorValuesEuler = [globalErrorSmallDrag(n, 'euler') for n in n_values]
+        errorValuesTrapezoid = [globalErrorSmallDrag(n, 'trapezoid') for n in n_values]
+
+    else:
+        print("Invalid drag specifier")
 
     plt.loglog(n_values, errorValuesEuler)
     plt.loglog(n_values, errorValuesTrapezoid)
@@ -183,14 +239,9 @@ def timeDifference(stepsRequired_euler, stepsRequired_rk2):
 
 def main():
 
-    # plotNumericalvsAnalytical(800, 800)
-    plotError(800, 1000)
-    """
+    # plotNumericalvsAnalytical(drag='Small')
+    # plotError(10, 240, drag='Large')
+    # plotError(400, 1200, drag='Small')
+    # plotSeveralNumericalvsAnalytical()
 
-    stepsRequired_euler = halfPointSolver(10, 300, euler, 10)
-    stepsRequired_rk2 = halfPointSolver(10, 300, rk2, 10)
-
-    plotNumericalvsAnalytical(stepsRequired_euler, stepsRequired_rk2)
-
-    print('Time rk2/euler = ', timeDifference(stepsRequired_euler, stepsRequired_rk2))
-    """
+    return 0
