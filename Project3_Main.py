@@ -12,7 +12,7 @@ if __name__ == "__main__":
         0: "Task1",
         1: "Task2",
         2: "Task3"
-    }[1]
+    }[2]
 
     print(MasterFlag)
 
