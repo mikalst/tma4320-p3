@@ -54,10 +54,10 @@ plt.show()
     
 
 #euler steplength
-print("Steplength to get the global error less tha 10 meters for 2 different methods: ")
-print("Steplength with Euler in task 1a is: ", functions.bisect(functions.euler,1 , 1000 ))
+#print("Steplength to get the global error less tha 10 meters for 2 different methods: ")
+#print("Steplength with Euler in task 1a is: ", functions.bisect(functions.euler,1 , 1000 ))
 #trapezoid steplength
-print("Steplength with Trapezoid in task 1b is: ", functions.bisect(functions.trapezoid, 1, 1000 ))
+#print("Steplength with Trapezoid in task 1b is: ", functions.bisect(functions.trapezoid, 1, 1000 ))
 
     
 #c
@@ -84,10 +84,10 @@ def plotTrajectoryDrag(method, methodName):
     
 #global error with finite drag
 def plotGlobalErrorDrag(method, methodName):
-    hValues = [h for h in range(10, 1500, 1)]
+    hValues = [h for h in range(10, 150, 1)]
     globalErrorValues = [functions.globalErrorDrag(method, h) for h in hValues]
     plt.figure(figsize=(4,4))
-    plt.title("Global feil med endelig drag s.f.a. steglengde", fontsize = 15)
+    plt.title("Feil med endelig drag s.f.a. steglengde", fontsize = 15)
     plt.xlabel("Timestep / (s)")
     plt.ylabel("Feil / (m)")
     plt.xticks(size=10)
@@ -102,7 +102,7 @@ plotTrajectoryDrag(functions.trapezoid, "Trapesmetoden")
 #error < 10:
 print("Steplength to get global error less than 10 meters: ")
 #assert(functions.gDrag(functions.trapezoid, 1) * functions.gDrag(functions.trapezoid, 10000) < 0)
-print("Steplength with Trapezoid in task 1c is: ", functions.bisectDrag(functions.trapezoid, 1, 10000 ))
+#print("Steplength with Trapezoid in task 1c is: ", functions.bisectDrag(functions.trapezoid, 1, 10000 ))
 #plotting global error with finite drag as a function of steplength
 plotGlobalErrorDrag(functions.trapezoid, "Trapesmetoden")
 
@@ -154,7 +154,8 @@ print(" Preferred error: ", functions.GLOBALERRORPREF, '\n',
 
 #plot of particle trajectory for embedded euler trapezoid pair solver for system with finite drag
 #and plot of solver's timestep develeopment (over time) as it attempts to keep the global error < 10m.
-
+#This is for a new solver
+'''
 tValues = []
 xValues = []
 yValues = []
@@ -177,7 +178,7 @@ while t < 48 * 3600:
 
 plt.figure(figsize=(4,4))
 plt.grid()
-plt.title("Utvikling av steglengde, global foretrukket feil = 10m", fontsize = 15)
+plt.title("Utvikling av steglengde", fontsize = 15)
 plt.xlabel("Tid / (s)")
 plt.ylabel("Steglengde / (s)")
 plt.scatter(tValues, hValues)
@@ -185,3 +186,14 @@ plt.scatter(tValues, hValues)
 print("Second embedded pair")
 print(" Preferred error: ", functions.GLOBALERRORPREF, '\n', 
       "Actual error: ", np.linalg.norm([functions.X_true[0].real, functions.X_true[1].real] - X))
+
+'''
+#even newer embedded pair
+x_values, y_values, h_values, t_values = functions.embeddedPairValues(functions.gErrorPref)
+
+plt.figure(figsize=(4,4))
+plt.grid()
+plt.title("Utvikling av steglengde", fontsize = 15)
+plt.xlabel("Tid / (s)")
+plt.ylabel("Steglengde / (s)")
+plt.scatter(tValues, hValues)

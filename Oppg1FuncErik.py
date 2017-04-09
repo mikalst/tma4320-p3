@@ -145,7 +145,8 @@ def embeddedPair(X, v, t, h):
 #d) - our embedded pair 2
 
 
-GLOBALERRORPREF = 25
+#GLOBALERRORPREF = 25
+'''
 def pairError(X, v, t, h):
     X_trapezoid, X_euler, vEuler = getStepValues(X, v, t, h)
     return np.linalg.norm(X_euler - X_trapezoid) - GLOBALERRORPREF * h / (48 * 3600), X_trapezoid, X_euler, vEuler
@@ -161,3 +162,46 @@ def embeddedPairBisect(X, v, t, lowerH, upperH):
     if (upperH - lowerH > TOL):
         return embeddedPairBisect(X, v, t, lowerH, upperH)
     return X_trapezoid, vEuler, t + mid
+'''
+#d) - our embedded pair 3
+
+gErrorPref=GLOBALERRORPREF = 25
+def pairError2(X, v, t, h, gErrorPref):
+    X_trapezoid, X_euler, vEuler = getStepValues(X, v, t, h)
+    return np.linalg.norm(X_euler - X_trapezoid) - gErrorPref * h / (48 * 3600), X_trapezoid, X_euler, vEuler
+
+TOL = 1
+def embeddedPairBisect2(X, v, t, lowerH, upperH, gErrorPref):
+    mid = (lowerH + upperH) / 2
+    error, X_trapezoid, X_euler, vEuler = pairError2(X, v, t, mid, gErrorPref)
+    if (error < 0):
+        lowerH = mid
+    else:
+        upperH = mid
+    if (upperH - lowerH > TOL):
+        return embeddedPairBisect2(X, v, t, lowerH, upperH, gErrorPref)
+    return X_trapezoid, vEuler, t + mid
+
+def embeddedPairValues(gErrorPref):
+    tValues = []
+    xValues = []
+    yValues = []
+    hValues = []
+    tLast = 0
+    t = 0
+    X = np.array([100.0, 0.0])
+    v = np.array([0.0, 0.0])
+    hLower = 500
+    hUpper = 1000
+    hRange = 1
+    while t < 48 * 3600:
+        X, v, t = embeddedPairBisect2(X, v, t, hLower, hUpper, gErrorPref)
+        xValues += [X[0]]
+        yValues += [X[1]]
+        
+        hValues += [t - tLast]
+        hLower = t - tLast - hRange
+        hUpper = t - tLast + hRange
+        tValues += [t]
+        tLast = t
+    return xValues, yValues, hValues, tValues
