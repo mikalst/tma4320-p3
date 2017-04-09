@@ -1,0 +1,66 @@
+#d) - our embedded pair
+
+def get_step_values(X, v, t, h): #returns trapezoid and euler step values
+    a = k * (v_w(X) - v)
+    v_euler = v + h * a
+    v = (v + v_euler) / 2
+    return X + h * v, X + h * v_euler, v_euler 
+
+GLOBALERRORPREF = 10
+def pair_error(X, v, t, h):
+    X_trapezoid, X_euler, v_euler = get_step_values(X, v, t, h)
+    return np.linalg.norm(X_euler - X_trapezoid) - GLOBALERRORPREF * h / (48 * 3600), X_trapezoid, X_euler, v_euler
+
+TOL = 1E-6
+def embedded_pair_bisect(X, v, t, lower_h, upper_h):
+    mid = (lower_h + upper_h) / 2
+    error, X_trapezoid, X_euler, v_euler = pair_error(X, v, t, mid)
+    if (error < 0):
+        lower_h = mid
+    else:
+        upper_h = mid
+    if (upper_h - lower_h > TOL):
+        return embedded_pair_bisect(X, v, t, lower_h, upper_h)
+    return X_trapezoid, v_euler, t + mid
+    
+    ------ny fil for plot
+    
+    
+    d)    
+
+#plot of particle trajectory for embedded euler trapezoid pair solver for system with finite drag
+#and plot of solver's timestep develeopment (over time) as it attempts to keep the global error < 10m.
+
+t_values = []
+x_values = []
+y_values = []
+h_values = []
+t_last = 0
+t = 0
+X = np.array([100.0, 0.0])
+v = np.array([0.0, 0.0])
+step = 1
+steps = []
+while t < 48 * 3600:
+    X, v, t = p.embedded_pair_bisect(X, v, t, 1, 1000)
+    x_values += [X[0]]
+    y_values += [X[1]]
+    
+    h_values += [t - t_last]
+    t_values += [t]
+    t_last = t
+    
+plt.figure(1)
+plt.title("$Trajectory$ $by$ $Euler$ $trapezoid$ $pair,$ $h$ $=$ $500$s", fontsize = 20)
+plt.xlabel("$x$ / (m)", fontsize = 15)
+plt.ylabel("$y$ / (m)", fontsize = 15)
+plt.plot(x_values, y_values)
+
+plt.figure(2)
+plt.title("$Timestep$ $development,$ $global$ $error$ $preference$ $=$ $10$m", fontsize = 20)
+plt.xlabel("$Time$ / (s)", fontsize = 15)
+plt.ylabel("$Timestep$ / (s)", fontsize = 15)
+plt.scatter(t_values, h_values) 
+
+print(" Preferred error: ", p.GLOBALERRORPREF, '\n', 
+      "Actual error: ", np.linalg.norm([p.X_true[0].real, p.X_true[1].real] - X))
