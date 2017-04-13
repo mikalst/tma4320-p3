@@ -1,5 +1,3 @@
-import time
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -202,39 +200,6 @@ def plotError(lower_N, upper_N, drag='Large'):
     plt.legend(['Euler', 'Explicit Trapezoid'])
     plt.grid(True)
     plt.show()
-
-
-def halfPointSolver(lower_h, upper_h, integrator, value):
-    TOL = 1
-
-    mid = int((lower_h + upper_h) / 2)
-
-    if globalError(mid, integrator) - value < 0:
-        upper_h = mid
-    else:
-        lower_h = mid
-
-    if upper_h - lower_h == TOL:
-        return upper_h
-    else:
-        return halfPointSolver(lower_h, upper_h, integrator, value)
-
-
-def timeDifference(stepsRequired_euler, stepsRequired_rk2):
-    timeStep_euler = TIME / stepsRequired_euler
-    timeStep_rk2 = TIME / stepsRequired_rk2
-
-    X0 = np.array([L, 0])
-
-    t_euler = time.time()
-    numericalParticleTrajectoryLargeDrag(X0, )
-    t_euler = time.time() - t_euler
-
-    t_rk2 = time.time()
-    # simpleParticleTrajectory(X0, 0, timeStep_rk2, TIME, rk2)
-    t_rk2 = time.time() - t_rk2
-
-    return t_rk2 / t_euler
 
 
 def main():

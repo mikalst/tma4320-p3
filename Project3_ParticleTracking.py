@@ -9,8 +9,6 @@ import pyproj
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
-from decimal import Decimal
-
 
 def main():
 
@@ -37,7 +35,6 @@ def simulateParticlesMoving(X0):
     arrayOf_X1 = []
 
     for start_time in hoursAfterDefaultDate:
-        print(start_time)
         time_initial = np.datetime64('2017-02-01T12:00:00') + np.timedelta64(start_time, 'h')
         time_final = time_initial + np.timedelta64(10, 'D')
 
