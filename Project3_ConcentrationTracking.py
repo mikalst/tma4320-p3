@@ -19,7 +19,7 @@ def main():
     plotConcentration(X1, hoursAfterDefaultDate)
 
 
-def calculateParticlePositions(end_time):
+def calculateParticlePositions(hoursAfterDefaultDate):
 
     # Number of 'particles' used to simulate concentration.
     N_particles = 10000
@@ -29,7 +29,7 @@ def calculateParticlePositions(end_time):
     X0[0, :] = np.random.uniform(-3.01e6, -2.99e6, N_particles)
     X0[1, :] = np.random.uniform(-1.21e6, -1.19e6, N_particles)
 
-    # Set how time interval
+    # start time, 0 = 1200:01/02/17, 1 = 1200:02/02/17, ...
     start_time = 0
 
     # Open dataset
@@ -42,9 +42,8 @@ def calculateParticlePositions(end_time):
     velocityField = P_Interpolator.Interpolator(dataSet)
 
     # Current and final time is set
-    time_current = np.datetime64('2017-02-01T12'
-                                 ':00:00') + np.timedelta64(start_time, 'h')
-    time_final = time_current + np.timedelta64(end_time, 'h')
+    time_current = np.datetime64('2017-02-01T12:00:00') + np.timedelta64(start_time, 'h')
+    time_final = time_current + np.timedelta64(hoursAfterDefaultDate, 'h')
 
     # Particle positions in final time is calculated
     X1 = P_Uf.particleTrajectory(X0, time_current, h, time_final, velocityField, P_Int.rk2, boolReturnOnlyEnd=True)
@@ -130,3 +129,6 @@ def plotParticlePositions(X1, hoursAfterDefaultDate):
     plt.savefig('part{}.png'.format(time))
     plt.show()
     plt.clf()
+
+if __name__ == "__main__":
+    main()
